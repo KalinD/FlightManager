@@ -4,14 +4,16 @@ using FlightManager.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace FlightManager.Data.Migrations
 {
     [DbContext(typeof(FlightManagerDbContext))]
-    partial class FlightManagerDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200301130841_FixedIdentity")]
+    partial class FixedIdentity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

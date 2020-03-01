@@ -11,6 +11,7 @@ namespace FlightManager.Data
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }
+        [StringLength(10)]
         public string SSN { get; set; } // ЕГН
         public string Address { get; set; }
         public bool IsAdmin { get; set; }

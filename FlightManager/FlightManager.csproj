@@ -12,6 +12,10 @@
     <Compile Remove="Data\Migrations\20200229161833_AddFlightUserIdentity.Designer.cs" />
     <Compile Remove="Data\Migrations\20200301093538_OneToManyResrvation.cs" />
     <Compile Remove="Data\Migrations\20200301093538_OneToManyResrvation.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200301130808_newStuff.cs" />
+    <Compile Remove="Data\Migrations\20200301130808_newStuff.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200301130948_FixedIdentity2.cs" />
+    <Compile Remove="Data\Migrations\20200301130948_FixedIdentity2.Designer.cs" />
   </ItemGroup>
 
 

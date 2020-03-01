@@ -26,10 +26,10 @@ namespace FlightManager.Services
                 SSN = sSN,
                 Address = address,
                 PhoneNumber = phoneNumber,
-                IsAdmin = dBContext.FlightUsers.ToList().Count == 0
+                IsAdmin = dBContext.Users.ToList().Count == 0
             };
 
-            dBContext.FlightUsers.Add(user);
+            dBContext.Users.Add(user);
             dBContext.SaveChanges();
 
             return user;
@@ -37,7 +37,7 @@ namespace FlightManager.Services
 
         public FlightUser DeleteUser(FlightUser user)
         {
-            dBContext.FlightUsers.Remove(user);
+            dBContext.Users.Remove(user);
             dBContext.SaveChanges();
 
             return user;
@@ -45,17 +45,17 @@ namespace FlightManager.Services
 
         public List<FlightUser> GetAllUsers()
         {
-            return dBContext.FlightUsers.ToList();
+            return dBContext.Users.ToList();
         }
 
         public FlightUser GetUserByUsername(string username)
         {
-            return dBContext.FlightUsers.Where(u => u.UserName == username).First();
+            return dBContext.Users.Where(u => u.UserName == username).First();
         }
 
         public FlightUser GetUserByEmail(string email)
         {
-            return dBContext.FlightUsers.Where(u => u.Email == email).First();
+            return dBContext.Users.Where(u => u.Email == email).First();
         }
 
         public FlightUser UpdateAddress(FlightUser user, string newAddress)

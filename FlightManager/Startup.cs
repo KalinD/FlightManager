@@ -36,7 +36,7 @@ namespace FlightManager
             services.AddDbContext<FlightManagerDbContext>(options =>
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
-            services.AddDefaultIdentity<IdentityUser>(options =>
+            services.AddDefaultIdentity<FlightUser>(options =>
             {
                 options.SignIn.RequireConfirmedAccount = false;
                 options.Password.RequireDigit = false;
@@ -44,7 +44,7 @@ namespace FlightManager
                 options.Password.RequireLowercase = false;
                 options.Password.RequireNonAlphanumeric = false;
                 options.Password.RequireUppercase = false;
-            }).AddEntityFrameworkStores<FlightManagerDbContext>();
+            }).AddRoles<IdentityRole>().AddEntityFrameworkStores<FlightManagerDbContext>();
             services.AddControllersWithViews();
             services.AddRazorPages();
         }
