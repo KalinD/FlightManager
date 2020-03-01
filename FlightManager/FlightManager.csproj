@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <UserSecretsId>aspnet-FlightManager-07124BB4-1D9A-4147-AD7D-C6E1C4C8A470</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Data\Migrations\20200229161639_AddFlightUserIdentity.cs" />
+    <Compile Remove="Data\Migrations\20200229161639_AddFlightUserIdentity.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200229161833_AddFlightUserIdentity.cs" />
+    <Compile Remove="Data\Migrations\20200229161833_AddFlightUserIdentity.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200301093538_OneToManyResrvation.cs" />
+    <Compile Remove="Data\Migrations\20200301093538_OneToManyResrvation.Designer.cs" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="3.1.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="3.1.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="3.1.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.1" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.1" />
+  </ItemGroup>
+
+</Project>

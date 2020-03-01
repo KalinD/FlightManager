@@ -1,0 +1,31 @@
+﻿@model UsersIndexViewModel
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Users</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Username</th>
+            <th>Phone NUmber</th>
+            <th>Social Security Number</th>
+            <th>Address</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (UserIndexViewModel user in Model.Users)
+        {
+            <tr>
+                <td>@user.Name</td>
+                <td>@user.Username</td>
+                <td>@user.PhoneNumber</td>
+                <td>@user.SSN</td>
+                <td>@user.Address</td>
+            </tr>
+        }
+    </tbody>
+</table>

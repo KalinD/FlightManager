@@ -1,0 +1,16 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace FlightManager.Models
+{
+    public class UserIndexViewModel
+    {
+        public string Username { get; set; }
+        public string Name { get; set; }
+        public string SSN { get; set; } // ЕГН
+        public string Address { get; set; }
+        public string PhoneNumber { get; set; }
+    }
+}

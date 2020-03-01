@@ -1,0 +1,34 @@
+﻿@model ReservationsIndexViewModel
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Phone Number</th>
+            <th>Departure City</th>
+            <th>Destination City</th>
+            <th>Departure Time</th>
+            <th>Ticket Type</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (ReservationIndexViewModel reservation in Model.Reservations)
+        {
+            <tr>
+                <td>@reservation.Name</td>
+                <td>@reservation.Email</td>
+                <td>@reservation.PhoneNumber</td>
+                <td>@reservation.DepartureCity</td>
+                <td>@reservation.DestinationCity</td>
+                <td>@reservation.DepartureTime</td>
+                <td>@reservation.TicketType</td>
+            </tr>
+        }
+    </tbody>
+</table>
