@@ -1,4 +1,5 @@
 ﻿using FlightManager.Data;
+using FlightManager.Models;
 using FlightManager.Services.Contracts;
 using System;
 using System.Collections.Generic;
@@ -25,14 +26,17 @@ namespace FlightManager.Services
                 LastName = lastName,
                 SSN = sSN,
                 Address = address,
-                PhoneNumber = phoneNumber,
-                IsAdmin = dBContext.Users.ToList().Count == 0
+                PhoneNumber = phoneNumber
             };
 
             dBContext.Users.Add(user);
             dBContext.SaveChanges();
 
             return user;
+        }
+
+        public FlightUser GetUserById(string id) { 
+            return dBContext.Users.Where(u => u.Id == id).First();
         }
 
         public FlightUser DeleteUser(FlightUser user)
@@ -58,28 +62,18 @@ namespace FlightManager.Services
             return dBContext.Users.Where(u => u.Email == email).First();
         }
 
-        public FlightUser UpdateAddress(FlightUser user, string newAddress)
+        public FlightUser UpdateUser(string id, UserEditViewModel user)
         {
-            user.Address = newAddress;
+            FlightUser dbUser = dBContext.Users.Where(u => u.Id == id).First();
+
+            dbUser.FirstName = user.FirstName;
+            dbUser.LastName = user.LastName;
+            dbUser.Address = user.Address;
+            dbUser.UserName = user.UserName;
+
             dBContext.SaveChanges();
 
-            return user;
-        }
-
-        public FlightUser UpdatePhoneNumber(FlightUser user, string newPhoneNumber)
-        {
-            user.PhoneNumber = newPhoneNumber;
-            dBContext.SaveChanges();
-
-            return user;
-        }
-
-        public FlightUser UpdateUsername(FlightUser user, string newUsername)
-        {
-            user.UserName = newUsername;
-            dBContext.SaveChanges();
-
-            return user;
+            return dbUser;
         }
     }
 }

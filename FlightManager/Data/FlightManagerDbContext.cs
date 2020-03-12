@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using FlightManager.Models;
 
 namespace FlightManager.Data
 {
@@ -14,5 +15,7 @@ namespace FlightManager.Data
         }
         public virtual DbSet<Flight> Flights { get; set; }
         public virtual DbSet<Reservation> Reservations { get; set; }
+        public DbSet<FlightManager.Models.EditFlightViewModel> EditFlightViewModel { get; set; }
+        public DbSet<FlightManager.Models.UserDetailsViewModel> UserDetailsViewModel { get; set; }
     }
 }

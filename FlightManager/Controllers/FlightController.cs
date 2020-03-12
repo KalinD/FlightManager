@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using X.PagedList;
 
 namespace FlightManager.Controllers
 {
@@ -17,21 +18,25 @@ namespace FlightManager.Controllers
     {
         private readonly IFlightsService flightService;
         private readonly IUserService userService;
+        private readonly IReservationService reservationService;
 
 
-        public FlightController(IFlightsService flightService, IUserService userService)
+        public FlightController(IFlightsService flightService, IUserService userService, IReservationService reservationService)
         {
             this.flightService = flightService;
             this.userService = userService;
+            this.reservationService = reservationService;
         }
 
         [Authorize]
-        public IActionResult Index()
+        public IActionResult Index(string searchString, int? page, int pageSize = 10)
         {
+            int pageNumber = (page ?? 1);
             FlightsIndexViewModel model = new FlightsIndexViewModel()
             {
                 Flights = flightService.GetAllFlights().Select(f => new FlightIndexViewModel()
                 {
+                    FlightId = f.FlightID,
                     TravelTime = f.ArrivalTime.Subtract(f.DepartureTime),
                     BusinessClassCapacity = f.BusinessClassCapacity,
                     CaptainName = f.CaptainName,
@@ -44,6 +49,47 @@ namespace FlightManager.Controllers
                 }).ToList()
             };
 
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                model.Flights = model.Flights.Where(f => f.DepartureCity.Contains(searchString) || f.DestinationCity.Contains(searchString)).ToList();
+            }
+
+            return View(model.Flights.ToPagedList(pageNumber, pageSize));
+        }
+
+        [Authorize(Roles = "Admin")]
+        public IActionResult Delete(Guid id)
+        {
+            flightService.DeleteFlight(flightService.GetFlightById(id));
+
+            return RedirectToAction("Index");
+        }
+
+        public IActionResult Details(Guid id)
+        {
+            Flight flight = flightService.GetFlightById(id);
+            FlightDetailsViewModel model = new FlightDetailsViewModel()
+            {
+                FlightId = flight.FlightID,
+                BusinessClassCapacity = flight.BusinessClassCapacity,
+                CaptainName = flight.CaptainName,
+                DepartureCity = flight.DepartureCity,
+                DepartureTime = flight.DepartureTime,
+                DestinationCity = flight.DestinationCity,
+                FlightDuration = flight.ArrivalTime.Subtract(flight.DepartureTime),
+                PlaneCapacity = flight.PlaneCapacity,
+                PlaneType = flight.PlaneType,
+                Reservations = reservationService.GetAllReservationsForFlight(flight).Select(r => new FlightReservationViewModel()
+                {
+                    Email = r.Email,
+                    Name = r.FirstName + " " + r.SecondName + " " + r.LastName,
+                    Nationality = r.Nationality,
+                    PhoneNumber = r.PhoneNumber,
+                    SSN = r.SSN,
+                    TicketType = r.TicketType
+                }).ToList()
+            };
+
             return View(model);
         }
 
@@ -53,12 +99,54 @@ namespace FlightManager.Controllers
             return View();
         }
 
+        public IActionResult Edit(Guid id)
+        {
+            Flight flight = flightService.GetFlightById(id);
+            EditFlightViewModel model = new EditFlightViewModel()
+            {
+                ArrivalTime = flight.ArrivalTime,
+                BusinessClassCapacity = flight.BusinessClassCapacity,
+                CaptainName = flight.CaptainName,
+                DepartureCity = flight.DepartureCity,
+                DepartureTime = flight.DepartureTime,
+                DestinationCity = flight.DestinationCity,
+                PlaneCapacity = flight.PlaneCapacity,
+                PlaneID = flight.PlaneID,
+                PlaneType = flight.PlaneType
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public IActionResult Edit(Guid id, string destinationCity, string departureCity, DateTime departureTime, DateTime arrivalTime,
+            string planeType, string planeID, string captainName, int planeCapacity, int businessClassCapacity)
+        {
+            Flight flight = new Flight()
+            {
+                ArrivalTime = arrivalTime,
+                BusinessClassCapacity = businessClassCapacity,
+                CaptainName = captainName,
+                DepartureCity = departureCity,
+                DepartureTime = departureTime,
+                DestinationCity = destinationCity,
+                PlaneCapacity = planeCapacity,
+                PlaneID = planeID,
+                PlaneType = planeType
+            };
+            flightService.UpdateFlight(id, flight);
+
+            return RedirectToAction("Details");
+        }
+
+
         [HttpPost]
         [Authorize]
         public IActionResult Create(string destinationCity, string departureCity, DateTime departureTime, DateTime arrivalTime,
             string planeType, string planeID, string captainName, int planeCapacity, int businessClassCapacity)
         {
-            if(arrivalTime < departureTime) { 
+            if (arrivalTime < departureTime)
+            {
                 return RedirectToAction("Create");
             }
             flightService.CreateFlight(destinationCity, departureCity, departureTime, arrivalTime, planeType, planeID, captainName, planeCapacity, businessClassCapacity);

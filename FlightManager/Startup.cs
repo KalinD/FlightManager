@@ -38,12 +38,13 @@ namespace FlightManager
                     Configuration.GetConnectionString("DefaultConnection")));
             services.AddDefaultIdentity<FlightUser>(options =>
             {
-                options.SignIn.RequireConfirmedAccount = false;
+                options.SignIn.RequireConfirmedEmail = true;
                 options.Password.RequireDigit = false;
                 options.Password.RequiredLength = 4;
                 options.Password.RequireLowercase = false;
                 options.Password.RequireNonAlphanumeric = false;
                 options.Password.RequireUppercase = false;
+                options.SignIn.RequireConfirmedPhoneNumber = false;
             }).AddRoles<IdentityRole>().AddEntityFrameworkStores<FlightManagerDbContext>();
             services.AddControllersWithViews();
             services.AddRazorPages();

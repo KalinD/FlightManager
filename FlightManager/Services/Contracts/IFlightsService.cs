@@ -13,7 +13,7 @@ namespace FlightManager.Services.Contracts
         public Flight GetFlight(string destinationCity, DateTime departureTime, string captainName);
         public Flight GetFlightById(Guid id);
         public List<Flight> GetAllFlights();
-        public Flight UpdateFlight(Flight flight, DateTime newDepartureTime, DateTime newArrivalTime);
+        public Flight UpdateFlight(Guid id, Flight flight);
 
     }
 }

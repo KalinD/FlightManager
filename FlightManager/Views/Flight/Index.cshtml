@@ -1,9 +1,19 @@
-﻿@model FlightsIndexViewModel
+﻿@using X.PagedList
+@using X.PagedList.Mvc
+@model IPagedList<FlightIndexViewModel>
 @{
     ViewData["Title"] = "Index";
 }
 
 <h1>Flights</h1>
+
+@using (Html.BeginForm("Index", "Flight", FormMethod.Get))
+{
+    <label>Search city: </label>
+    @Html.TextBox("SearchString");
+    <input type="submit" value="Search" />
+}
+
 
 <table class="table">
     <tr>
@@ -17,7 +27,7 @@
         <th>Plane Capacity</th>
         <th>Business Class Capacity</th>
     </tr>
-    @foreach (FlightIndexViewModel flight in Model.Flights)
+    @foreach (FlightIndexViewModel flight in Model)
     {
         <tr>
             <td>@flight.DestinationCity</td>
@@ -29,6 +39,28 @@
             <td>@flight.CaptainName</td>
             <td>@flight.PlaneCapacity</td>
             <td>@flight.BusinessClassCapacity</td>
+            @if (User.IsInRole("Admin"))
+            {
+                <td>
+                    <a asp-action="Details" asp-route-id="@flight.FlightId">Details</a>
+                    <a asp-action="Delete" asp-route-id="@flight.FlightId">Delete</a>
+                    <a asp-action="Edit" asp-route-id="@flight.FlightId">Edit</a>
+                </td>
+            }
+            else
+            {
+        <td>
+            <a asp-action="Details" asp-route-id="@flight.FlightId">Details</a>
+        </td>
+            }
         </tr>
     }
 </table>
+
+Page @Model.PageNumber of @Model.PageCount
+<div class="pages">
+    @for (int i = 1; i <= Model.PageCount; i++)
+    {
+        <a asp-action="Index" asp-route-page="@i"><div class="page">@i</div></a>
+    }
+</div>

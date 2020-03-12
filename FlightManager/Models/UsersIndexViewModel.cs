@@ -8,5 +8,7 @@ namespace FlightManager.Models
     public class UsersIndexViewModel
     {
         public List<UserIndexViewModel> Users;
+        public int PageCount;
+        public int PageNumber;
     }
 }

@@ -28,6 +28,11 @@ namespace FlightManager.Services
             return dBContext.Reservations.ToList();
         }
 
+        public List<Reservation> GetAllReservationsForFlight(Flight flight)
+        {
+            return dBContext.Reservations.Where(r => r.FlightID == flight.FlightID).ToList();
+        }
+
         public Reservation CreateReservation(string email, string firstName, string secondName, string lastName, string sSN, string phoneNumber, string nationality, string ticketType, Flight flight)
         {
             Reservation reservation = new Reservation()

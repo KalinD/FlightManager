@@ -58,10 +58,21 @@ namespace FlightManager.Services
             return dBContext.Flights.Where(f => f.FlightID == id).First();
         }
 
-        public Flight UpdateFlight(Flight flight, DateTime newDepartureTime, DateTime newArrivalTime)
+        public Flight UpdateFlight(Guid id, Flight flight)
         {
-            flight.DepartureTime = newDepartureTime;
-            flight.ArrivalTime = newArrivalTime;
+            Flight dbFlight = dBContext.Flights.Where(f => f.FlightID == id).First();
+
+            dbFlight.ArrivalTime = flight.ArrivalTime;
+            dbFlight.BusinessClassCapacity = flight.BusinessClassCapacity;
+            dbFlight.CaptainName = flight.CaptainName;
+            dbFlight.DepartureCity = flight.DepartureCity;
+            dbFlight.DepartureTime = flight.DepartureTime;
+            dbFlight.DestinationCity = flight.DestinationCity;
+            dbFlight.PlaneCapacity = flight.PlaneCapacity;
+            dbFlight.PlaneID = flight.PlaneID;
+            dbFlight.PlaneType = flight.PlaneType;
+
+            dBContext.Flights.Update(dbFlight);
             dBContext.SaveChanges();
 
             return flight;

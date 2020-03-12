@@ -1,4 +1,5 @@
-﻿@model UsersIndexViewModel
+﻿@using X.PagedList.Mvc
+@model X.PagedList.IPagedList<UserIndexViewModel>
 
 @{
     ViewData["Title"] = "Index";
@@ -17,7 +18,7 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (UserIndexViewModel user in Model.Users)
+        @foreach (UserIndexViewModel user in Model)
         {
             <tr>
                 <td>@user.Name</td>
@@ -25,7 +26,23 @@
                 <td>@user.PhoneNumber</td>
                 <td>@user.SSN</td>
                 <td>@user.Address</td>
+                @if (User.IsInRole("Admin"))
+                {
+                    <td>
+                        <a asp-action="Details" asp-route-id="@user.UserId">Details</a>
+                        <a asp-action="Delete" asp-route-id="@user.UserId">Delete</a>
+                        <a asp-action="Edit" asp-route-id="@user.UserId">Edit</a>
+                    </td>
+                }
+                else
+                {
+                    <td>
+                        <a asp-action="Details" asp-route-id="@user.UserId">Details</a>
+                    </td>
+                }
             </tr>
         }
     </tbody>
 </table>
+
+Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount

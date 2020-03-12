@@ -12,6 +12,7 @@ namespace FlightManager.Services.Contracts
         public Reservation DeleteReservation(Reservation reservation);
         public Reservation GetReservation(string firstName, string secondName, string lastName);
         public List<Reservation> GetAllReservations();
+        public List<Reservation> GetAllReservationsForFlight(Flight flight);
         public Reservation UpdatePhoneNumber(Reservation reservation, string newPhoneNumber);
         public Reservation ChangeTicketType(Reservation reservation);
     }

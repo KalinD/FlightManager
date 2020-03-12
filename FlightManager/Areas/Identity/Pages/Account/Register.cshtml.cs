@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
+using FlightManager.Services.Contracts;
 
 namespace FlightManager.Areas.Identity.Pages.Account
 {
@@ -22,17 +23,20 @@ namespace FlightManager.Areas.Identity.Pages.Account
     {
         private readonly SignInManager<FlightUser> _signInManager;
         private readonly UserManager<FlightUser> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
 
         public RegisterModel(
             UserManager<FlightUser> userManager,
             SignInManager<FlightUser> signInManager,
+            RoleManager<IdentityRole> roleManager,
             ILogger<RegisterModel> logger,
             IEmailSender emailSender)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _roleManager = roleManager;
             _logger = logger;
             _emailSender = emailSender;
         }
@@ -46,6 +50,18 @@ namespace FlightManager.Areas.Identity.Pages.Account
 
         public class InputModel
         {
+            [Required]
+            [Display(Name = "First Name")]
+            public string FirstName { get; set; }
+
+            [Required]
+            [Display(Name = "Last Name")]
+            public string LastName { get; set; }
+
+            [Required]
+            [Display(Name = "Username")]
+            public string UserName { get; set; }
+
             [Required]
             [EmailAddress]
             [Display(Name = "Email")]
@@ -61,6 +77,17 @@ namespace FlightManager.Areas.Identity.Pages.Account
             [Display(Name = "Confirm password")]
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
             public string ConfirmPassword { get; set; }
+
+            [Required]
+            [Display(Name = "Address")]
+            public string Address { get; set; }
+
+            [DataType(DataType.PhoneNumber)]
+            [Display(Name = "Phone Number")]
+            public string PhoneNumber { get; set; }
+
+            [Display(Name = "Social Security Number")]
+            public string SSN { get; set; }
         }
 
         public async Task OnGetAsync(string returnUrl = null)
@@ -75,10 +102,24 @@ namespace FlightManager.Areas.Identity.Pages.Account
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             if (ModelState.IsValid)
             {
-                var user = new FlightUser { UserName = Input.Email, Email = Input.Email };
+                var user = new FlightUser {
+                    UserName = Input.UserName,
+                    Email = Input.Email,
+                    Address = Input.Address,
+                    FirstName = Input.FirstName,
+                    LastName = Input.LastName,
+                    PhoneNumber = Input.PhoneNumber,
+                    SSN = Input.SSN
+                };
                 var result = await _userManager.CreateAsync(user, Input.Password);
                 if (result.Succeeded)
                 {
+                    if (!_roleManager.Roles.Any()) { 
+                        await _roleManager.CreateAsync(new IdentityRole("Admin"));
+                    }
+                    if(_userManager.Users.Count() == 1) { 
+                        await _userManager.AddToRoleAsync(user, "Admin");
+                    }
                     _logger.LogInformation("User created a new account with password.");
 
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);

@@ -13,9 +13,12 @@
         <li class="nav-item">
             <a class="nav-link text-dark" asp-area="" asp-controller="Reservation" asp-action="Index">Reservatons</a>
         </li>
-        <li class="nav-item">
-            <a class="nav-link text-dark" asp-area="" asp-controller="Flight" asp-action="Create">New Flight</a>
-        </li>
+        @if (User.IsInRole("Admin"))
+        {
+            <li class="nav-item">
+                <a class="nav-link text-dark" asp-area="" asp-controller="Flight" asp-action="Create">New Flight</a>
+            </li>
+        }
         <li class="nav-item">
             <a class="nav-link text-dark" asp-area="" asp-controller="Flight" asp-action="Index">Flights</a>
         </li>

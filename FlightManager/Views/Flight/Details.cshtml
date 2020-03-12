@@ -1,0 +1,49 @@
+﻿@model FlightDetailsViewModel
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Flight from @Model.DepartureCity to @Model.DestinationCity</h1>
+<p>
+    Plane leaves @Model.DepartureCity at: @Model.DepartureTime<br />
+    Flight duration: @Model.FlightDuration<br />
+    Captain @Model.CaptainName will be flying @Model.PlaneType plane<br />
+    The whole plane capacity is: @(Model.PlaneCapacity + Model.BusinessClassCapacity)<br />
+    From which business class tickets: @Model.BusinessClassCapacity<br />
+</p>
+
+@if (User.IsInRole("Admin"))
+{
+    <a asp-action="Edit" asp-route-id="@Model.FlightId">Edit</a>
+}
+
+@if (Model.Reservations.Count > 0)
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Social Security Number</th>
+                <th>Phone Number</th>
+                <th>Nationality</th>
+                <th>Ticket Type</th>
+            </tr>
+        </thead>
+        @foreach (FlightReservationViewModel reservation in Model.Reservations)
+        {
+            <tr>
+                <td>@reservation.Name</td>
+                <td>@reservation.Email</td>
+                <td>@reservation.SSN</td>
+                <td>@reservation.PhoneNumber</td>
+                <td>@reservation.Nationality</td>
+                <td>@reservation.TicketType</td>
+            </tr>
+        }
+    </table>
+}
+else
+{
+    <h3>No reservations yet!</h3>
+}

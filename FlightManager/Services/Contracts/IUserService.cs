@@ -1,4 +1,5 @@
 ﻿using FlightManager.Data;
+using FlightManager.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,9 +13,8 @@ namespace FlightManager.Services.Contracts
         public FlightUser DeleteUser(FlightUser user);
         public FlightUser GetUserByUsername(string username);
         public FlightUser GetUserByEmail(string email);
+        public FlightUser GetUserById(string id);
         public List<FlightUser> GetAllUsers();
-        public FlightUser UpdateUsername(FlightUser user, string newUsername);
-        public FlightUser UpdateAddress(FlightUser user, string newAddress);
-        public FlightUser UpdatePhoneNumber(FlightUser user, string newPhoneNumber);
+        public FlightUser UpdateUser(string id, UserEditViewModel user);
     }
 }

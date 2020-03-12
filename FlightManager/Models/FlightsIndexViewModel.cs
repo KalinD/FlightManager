@@ -8,5 +8,8 @@ namespace FlightManager.Models
     public class FlightsIndexViewModel
     {
         public List<FlightIndexViewModel> Flights { get; set; }
+        public int PageCount;
+        public int PageNumber;
+        public string SearchString;
     }
 }
