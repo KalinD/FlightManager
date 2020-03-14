@@ -1,5 +1,6 @@
 ﻿using FlightManager.Data;
 using FlightManager.Services.Contracts;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,21 +11,24 @@ namespace FlightManager.Services
     public class ReservationService : IReservationService
     {
         private readonly FlightManagerDbContext dBContext;
+        private readonly IEmailSender emailSender;
 
-        public ReservationService(FlightManagerDbContext context)
+        public ReservationService(FlightManagerDbContext context, IEmailSender emailSender)
         {
             dBContext = context;
+            this.emailSender = emailSender;
         }
 
         public Reservation ChangeTicketType(Reservation reservation)
         {
-            reservation.TicketType = reservation.TicketType == "Business" ? "Regular" : "Business";
+            dBContext.Reservations.Where(r => r.ReservationID == reservation.ReservationID).First().TicketType = reservation.TicketType == "Business" ? "Regular" : "Business";
             dBContext.SaveChanges();
 
             return reservation;
         }
 
-        public List<Reservation> GetAllReservations() { 
+        public List<Reservation> GetAllReservations()
+        {
             return dBContext.Reservations.ToList();
         }
 
@@ -33,7 +37,7 @@ namespace FlightManager.Services
             return dBContext.Reservations.Where(r => r.FlightID == flight.FlightID).ToList();
         }
 
-        public Reservation CreateReservation(string email, string firstName, string secondName, string lastName, string sSN, string phoneNumber, string nationality, string ticketType, Flight flight)
+        public Reservation CreateReservation(string email, string firstName, string secondName, string lastName, string sSN, string phoneNumber, string nationality, string ticketType, int ticketCount, Flight flight)
         {
             Reservation reservation = new Reservation()
             {
@@ -45,34 +49,61 @@ namespace FlightManager.Services
                 PhoneNumber = phoneNumber,
                 Nationality = nationality,
                 TicketType = ticketType,
-                Flight = flight
+                Flight = flight,
+                IsConfirmed = false,
+                TicketsCount = ticketCount,
+                FlightID = flight.FlightID
             };
 
+            Flight dbFlight = dBContext.Flights.Where(f => f.FlightID == flight.FlightID).First();
+            if (ticketType == "Business")
+            {
+                dbFlight.BusinessTicketsLeft -= ticketCount;
+            }
+            else
+            {
+                dbFlight.TicketsLeft -= ticketCount;
+            }
+
             dBContext.Reservations.Add(reservation);
+            dBContext.SaveChanges();
+
+            string msg = $@"Confirmation for flight from {dbFlight.DepartureCity} to {dbFlight.DestinationCity}
+                            <a href={"https://localhost:44361"}/Reservation/Confirm?id={reservation.ReservationID}>Confirm</a>
+                            <a href={"https://localhost:44361"}/Reservation/Delete?id={reservation.ReservationID}>Delete</a>";
+
+            emailSender.SendEmailAsync(reservation.Email, "Reservation Confirmation", msg).GetAwaiter().GetResult();
+
+            return reservation;
+        }
+
+        public Reservation ConfirmReservation(Guid id) { 
+            Reservation reservation = dBContext.Reservations.Where(r => r.ReservationID == id).First();
+            reservation.IsConfirmed = true;
+
+            dBContext.Reservations.Update(reservation);
             dBContext.SaveChanges();
 
             return reservation;
         }
 
-        public Reservation DeleteReservation(Reservation reservation)
+        public Reservation DeleteReservation(Guid id)
         {
+            Reservation reservation = dBContext.Reservations.Where(r => r.ReservationID == id).First();
+            
+            if (reservation.IsConfirmed) { 
+                return reservation;
+            }
+
             dBContext.Reservations.Remove(reservation);
             dBContext.SaveChanges();
 
             return reservation;
         }
 
-        public Reservation GetReservation(string firstName, string lastName, string SSN)
+        public Reservation GetReservationById(Guid id)
         {
-            return dBContext.Reservations.Where(r => r.FirstName == firstName && r.LastName == lastName && r.SSN == SSN).First();
-        }
-
-        public Reservation UpdatePhoneNumber(Reservation reservation, string newPhoneNumber)
-        {
-            reservation.PhoneNumber = newPhoneNumber;
-            dBContext.SaveChanges();
-
-            return reservation;
+            return dBContext.Reservations.Where(r => r.ReservationID == id).First();
         }
     }
 }

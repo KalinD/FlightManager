@@ -17,8 +17,10 @@ namespace FlightManager.Data
         public string PhoneNumber { get; set; }
         public string Nationality { get; set; }
         public string TicketType { get; set; }
+        public int TicketsCount { get; set; }
         public string Email { get; set; }
         public Guid FlightID { get; set; }
         public Flight Flight { get; set; }
+        public bool IsConfirmed { get; set; }
     }
 }

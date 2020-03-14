@@ -4,14 +4,16 @@ using FlightManager.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace FlightManager.Data.Migrations
 {
     [DbContext(typeof(FlightManagerDbContext))]
-    partial class FlightManagerDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200314164508_RemovedUnecessaryTable")]
+    partial class RemovedUnecessaryTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -156,9 +158,6 @@ namespace FlightManager.Data.Migrations
                     b.Property<Guid>("FlightID")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<bool>("IsConfirmed")
-                        .HasColumnType("bit");
-
                     b.Property<string>("LastName")
                         .HasColumnType("nvarchar(max)");
 
@@ -176,9 +175,6 @@ namespace FlightManager.Data.Migrations
 
                     b.Property<string>("TicketType")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("TicketsCount")
-                        .HasColumnType("int");
 
                     b.HasKey("ReservationID");
 

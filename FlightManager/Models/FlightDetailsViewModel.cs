@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace FlightManager.Models
 {
@@ -15,7 +13,12 @@ namespace FlightManager.Models
         public string PlaneType { get; set; }
         public string CaptainName { get; set; }
         public int PlaneCapacity { get; set; }
+        public int TicketsLeft { get; set; }
         public int BusinessClassCapacity { get; set; }
+        public int BusinessTicketsLeft { get; set; }
         public List<FlightReservationViewModel> Reservations { get; set; }
+        public int PagesCount { get; set; }
+        public int PageSize { get; set; }
+        public int PageNumber { get; set; }
     }
 }

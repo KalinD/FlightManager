@@ -7,7 +7,6 @@ using FlightManager.Models;
 using FlightManager.Services.Contracts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using X.PagedList;
 
 namespace FlightManager.Controllers
 {
@@ -21,7 +20,7 @@ namespace FlightManager.Controllers
         }
 
         [Authorize]
-        public IActionResult Index(int? page, int pageSize = 10)
+        public IActionResult Index(int? page, string filter, int pageSize = 10)
         {
             int pageNumber = (page ?? 1);
             UsersIndexViewModel model = new UsersIndexViewModel()
@@ -30,13 +29,50 @@ namespace FlightManager.Controllers
                 {
                     UserId = u.Id,
                     Address = u.Address,
-                    Name = u.FirstName + " " + u.LastName,
+                    FirstName = u.FirstName,
+                    LastName = u.LastName,
+                    Email = u.Email,
                     PhoneNumber = u.PhoneNumber,
                     SSN = u.SSN,
                     Username = u.UserName
-                }).ToList()
+                }).ToList(),
+                Filter = filter,
+                PageNumber = pageNumber,
+                PageSize = pageSize,
+                PagesCount = (int)(Math.Ceiling(userService.GetUsersCount() / (double)pageSize))
             };
-            return View(model.Users.ToPagedList(pageNumber, pageSize));
+
+            switch (filter)
+            {
+                case "email":
+                    model.Users = model.Users.OrderBy(u => u.Email).ToList();
+                    break;
+                case "emailReversed":
+                    model.Users = model.Users.OrderByDescending(u => u.Email).ToList();
+                    break;
+                case "username":
+                    model.Users = model.Users.OrderBy(u => u.Username).ToList();
+                    break;
+                case "usernameReversed":
+                    model.Users = model.Users.OrderByDescending(u => u.Username).ToList();
+                    break;
+                case "firstName":
+                    model.Users = model.Users.OrderBy(u => u.FirstName).ToList();
+                    break;
+                case "firstNameReversed":
+                    model.Users = model.Users.OrderByDescending(u => u.FirstName).ToList();
+                    break;
+                case "lastName":
+                    model.Users = model.Users.OrderBy(u => u.LastName).ToList();
+                    break;
+                case "lastNameReversed":
+                    model.Users = model.Users.OrderByDescending(u => u.LastName).ToList();
+                    break;
+            }
+
+            model.Users = model.Users.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
+
+            return View(model);
         }
 
         [Authorize(Roles = "Admin")]

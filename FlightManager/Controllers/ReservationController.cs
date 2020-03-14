@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using FlightManager.Data;
 using FlightManager.Models;
 using FlightManager.Services.Contracts;
@@ -20,8 +18,9 @@ namespace FlightManager.Controllers
             this.flightService = flightService;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(string filter, int? page, int pageSize = 10)
         {
+            int pageNumber = (page ?? 1);
             ReservationsIndexViewModel model = new ReservationsIndexViewModel()
             {
                 Reservations = reservationService.GetAllReservations().Select(r => new ReservationIndexViewModel()
@@ -33,8 +32,24 @@ namespace FlightManager.Controllers
                     DestinationCity = flightService.GetFlightById(r.FlightID).DestinationCity,
                     PhoneNumber = r.PhoneNumber,
                     TicketType = r.TicketType,
-                }).ToList()
+                    TicketsCount = r.TicketsCount
+                }).ToList(),
+                Filter = filter,
+                PageNumber = pageNumber,
+                PagesCount = (int) Math.Ceiling(reservationService.GetAllReservations().Count / (double) pageSize),
+                PageSize = pageSize
             };
+
+            if(filter == "email") { 
+                model.Reservations = model.Reservations.OrderBy(r => r.Email).ToList();
+            }
+            else if(filter == "emailReversed")
+            {
+                model.Reservations = model.Reservations.OrderByDescending(r => r.Email).ToList();
+            }
+
+            model.Reservations = model.Reservations.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
+
             return View(model);
         }
 
@@ -48,26 +63,56 @@ namespace FlightManager.Controllers
                     DepartureCity = f.DepartureCity,
                     DepartureTime = f.DepartureTime,
                     DestinationCity = f.DestinationCity,
+                    BusinessTicketsLeft = f.BusinessTicketsLeft,
+                    TicketsLeft = f.TicketsLeft
                 }).ToList()
             };
+
             return View(model);
         }
 
         [HttpPost]
-        public IActionResult Create(Guid flightId, int ticketCount, string email, string firstName, string secondName, string lastName, string SSN, string phoneNumber,
-            string nationality, string ticketType)
+        public IActionResult Create(ReservationCreateViewModel model)
         {
-            Flight flight = flightService.GetFlightById(flightId);
-            if (ticketType == "business")
+            Flight flight = flightService.GetFlightById(model.FlightId);
+            if (model.TicketType == "Business" && flight.BusinessTicketsLeft < model.TicketCount)
             {
-                flight.BusinessClassCapacity -= ticketCount;
+                model.ErrorMessage = "Not enough Business class tickets!";
+                return View("Create", model);
             }
-            else
+            else if (model.TicketType == "Regular" && flight.TicketsLeft < model.TicketCount)
             {
-                flight.PlaneCapacity -= ticketCount;
+                model.ErrorMessage = "Not enough Regular class tickets!";
+                return View("Create", model);
             }
-            reservationService.CreateReservation(email, firstName, secondName, lastName, SSN, phoneNumber, nationality, ticketType, flight);
+
+            reservationService.CreateReservation(model.Email, model.FirstName, model.SecondName, model.LastName, model.SSN, model.PhoneNumber, model.Nationality, model.TicketType, model.TicketCount, flight);
+
             return RedirectToAction("Index", "Home");
+        }
+
+        public IActionResult Confirm(Guid id) { 
+            if(reservationService.GetReservationById(id) == null) { 
+                return RedirectToAction("NotFound");
+            }
+
+            reservationService.ConfirmReservation(id);
+
+            Reservation reservation = reservationService.GetReservationById(id);
+
+            ReservationConfirmViewModel model = new ReservationConfirmViewModel() { 
+                DepartureCity = reservation.Flight.DepartureCity,
+                DestinationCity = reservation.Flight.DestinationCity,
+                Name = reservation.FirstName + " " + reservation.LastName
+            };
+
+            return View(model);
+        }
+
+        public IActionResult Delete(Guid id) { 
+            reservationService.DeleteReservation(id);
+
+            return View();
         }
     }
 }

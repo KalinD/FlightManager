@@ -1,19 +1,17 @@
 ﻿using FlightManager.Data;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace FlightManager.Services.Contracts
 {
     public interface IReservationService
     {
-        public Reservation CreateReservation(string email, string firstName, string secondName, string lastName, string sSN, string phoneNumber, string nationality, string ticketType, Flight flight);
-        public Reservation DeleteReservation(Reservation reservation);
-        public Reservation GetReservation(string firstName, string secondName, string lastName);
+        public Reservation CreateReservation(string email, string firstName, string secondName, string lastName, string sSN, string phoneNumber, string nationality, string ticketType, int ticketCount, Flight flight);
+        public Reservation DeleteReservation(Guid id);
+        public Reservation GetReservationById(Guid id);
         public List<Reservation> GetAllReservations();
         public List<Reservation> GetAllReservationsForFlight(Flight flight);
-        public Reservation UpdatePhoneNumber(Reservation reservation, string newPhoneNumber);
+        public Reservation ConfirmReservation(Guid id);
         public Reservation ChangeTicketType(Reservation reservation);
     }
 }

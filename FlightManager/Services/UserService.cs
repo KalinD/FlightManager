@@ -71,9 +71,16 @@ namespace FlightManager.Services
             dbUser.Address = user.Address;
             dbUser.UserName = user.UserName;
 
+            dBContext.Users.Update(dbUser);
+
             dBContext.SaveChanges();
 
             return dbUser;
+        }
+
+        public int GetUsersCount()
+        {
+            return dBContext.Users.Count();
         }
     }
 }

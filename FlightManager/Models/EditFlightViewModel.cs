@@ -1,14 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace FlightManager.Models
 {
     public class EditFlightViewModel
     {
-        [Key]
         public Guid FlightId { get; set; }
         public string DestinationCity { get; set; }
         public string DepartureCity { get; set; }
@@ -18,6 +13,8 @@ namespace FlightManager.Models
         public string PlaneID { get; set; }
         public string CaptainName { get; set; }
         public int PlaneCapacity { get; set; }
+        public int TicketsLeft { get; set; }
         public int BusinessClassCapacity { get; set; }
+        public int BusinessTicketsLeft { get; set; }
     }
 }

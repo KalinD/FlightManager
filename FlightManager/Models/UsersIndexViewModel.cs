@@ -1,14 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace FlightManager.Models
 {
     public class UsersIndexViewModel
     {
-        public List<UserIndexViewModel> Users;
-        public int PageCount;
-        public int PageNumber;
+        public List<UserIndexViewModel> Users { get; set; }
+        public int PageSize { get; set; }
+        public int PageNumber { get; set; }
+        public int PagesCount { get; set; }
+        public string Filter { get; set; }
     }
 }

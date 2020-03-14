@@ -15,7 +15,5 @@ namespace FlightManager.Data
         }
         public virtual DbSet<Flight> Flights { get; set; }
         public virtual DbSet<Reservation> Reservations { get; set; }
-        public DbSet<FlightManager.Models.EditFlightViewModel> EditFlightViewModel { get; set; }
-        public DbSet<FlightManager.Models.UserDetailsViewModel> UserDetailsViewModel { get; set; }
     }
 }

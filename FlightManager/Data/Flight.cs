@@ -18,6 +18,8 @@ namespace FlightManager.Data
         public string PlaneID { get; set; }
         public string CaptainName { get; set; }
         public int PlaneCapacity { get; set; }
+        public int TicketsLeft { get; set; }
         public int BusinessClassCapacity { get; set; }
+        public int BusinessTicketsLeft { get; set; }
     }
 }

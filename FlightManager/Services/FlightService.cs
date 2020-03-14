@@ -27,7 +27,9 @@ namespace FlightManager.Services
                 PlaneID = planeID,
                 CaptainName = captainName,
                 PlaneCapacity = planeCapacity,
-                BusinessClassCapacity = businessClassCapacity
+                BusinessClassCapacity = businessClassCapacity,
+                BusinessTicketsLeft = businessClassCapacity,
+                TicketsLeft = planeCapacity
             };
 
             dBContext.Flights.Add(flight);

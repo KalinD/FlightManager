@@ -8,8 +8,8 @@
     Plane leaves @Model.DepartureCity at: @Model.DepartureTime<br />
     Flight duration: @Model.FlightDuration<br />
     Captain @Model.CaptainName will be flying @Model.PlaneType plane<br />
-    The whole plane capacity is: @(Model.PlaneCapacity + Model.BusinessClassCapacity)<br />
-    From which business class tickets: @Model.BusinessClassCapacity<br />
+    The whole plane capacity is: @(Model.PlaneCapacity + Model.BusinessClassCapacity) (@(Model.BusinessTicketsLeft + Model.TicketsLeft) left)<br />
+    From which business class tickets: @Model.BusinessClassCapacity (@Model.BusinessTicketsLeft left)<br />
 </p>
 
 @if (User.IsInRole("Admin"))
@@ -28,6 +28,7 @@
                 <th>Phone Number</th>
                 <th>Nationality</th>
                 <th>Ticket Type</th>
+                <th>Tickets Bought</th>
             </tr>
         </thead>
         @foreach (FlightReservationViewModel reservation in Model.Reservations)
@@ -39,9 +40,54 @@
                 <td>@reservation.PhoneNumber</td>
                 <td>@reservation.Nationality</td>
                 <td>@reservation.TicketType</td>
+                <td>@reservation.TicketsCount</td>
             </tr>
         }
     </table>
+    <div class="float-left">
+        <div class="pages">
+            @for (int i = 1; i <= Model.PagesCount; i++)
+            {
+                if (Model.PageNumber == i)
+                {
+                    <a class="disabled"><div class="page">@i</div></a>
+                }
+                else
+                {
+                    <a asp-action="Details" asp-route-id="@Model.FlightId" asp-route-page="@i" asp-route-pageSize="@Model.PageSize"><div class="page">@i</div></a>
+                }
+            }
+        </div>
+        <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row">
+            Page @Model.PageNumber of @Model.PagesCount
+        </div>
+    </div>
+    <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white mb-3 float-right">
+        <div class="container">
+            <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row">
+                <span style="margin-right: 5%">Show: </span>
+                @switch (Model.PageSize)
+                {
+                    case 25:
+                        <div class="page"><a asp-action="Index" asp-route-pageSize="10">10</a></div>
+                        <div class="page"><a class="disabled">25</a></div>
+                        <div class="page"><a asp-action="Index" asp-route-pageSize="50">50</a></div>
+
+                        break;
+                    case 50:
+                        <div class="page"><a asp-action="Index" asp-route-pageSize="10">10</a></div>
+                        <div class="page"><a asp-action="Index" asp-route-pageSize="25">25</a></div>
+                        <div class="page"><a class="disabled">50</a></div>
+                        break;
+                    default:
+                        <div class="page"><a class="disabled">10</a></div>
+                        <div class="page"><a asp-action="Index" asp-route-pageSize="25">25</a></div>
+                        <div class="page"><a asp-action="Index" asp-route-pageSize="50">50</a></div>
+                        break;
+                }
+            </div>
+        </div>
+    </nav>
 }
 else
 {

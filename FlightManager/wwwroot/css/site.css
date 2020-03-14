@@ -79,3 +79,7 @@ body {
     display: inline-block;
     border: 1px solid rgb(128, 128, 128);
 }
+
+th {
+    white-space: nowrap;
+}

@@ -46,7 +46,10 @@ namespace FlightManager.Controllers
                     PlaneCapacity = f.PlaneCapacity,
                     PlaneID = f.PlaneID,
                     PlaneType = f.PlaneType
-                }).ToList()
+                }).ToList(),
+                PageNumber = pageNumber,
+                PageSize = pageSize,
+                PagesCount = (int) Math.Ceiling(flightService.GetAllFlights().Count / (double) pageSize)
             };
 
             if (!String.IsNullOrEmpty(searchString))
@@ -54,7 +57,9 @@ namespace FlightManager.Controllers
                 model.Flights = model.Flights.Where(f => f.DepartureCity.Contains(searchString) || f.DestinationCity.Contains(searchString)).ToList();
             }
 
-            return View(model.Flights.ToPagedList(pageNumber, pageSize));
+            model.Flights = model.Flights.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
+
+            return View(model);
         }
 
         [Authorize(Roles = "Admin")]
@@ -65,8 +70,9 @@ namespace FlightManager.Controllers
             return RedirectToAction("Index");
         }
 
-        public IActionResult Details(Guid id)
+        public IActionResult Details(Guid id, int? page, int pageSize = 10)
         {
+            int pageNumber = (page ?? 1);
             Flight flight = flightService.GetFlightById(id);
             FlightDetailsViewModel model = new FlightDetailsViewModel()
             {
@@ -79,6 +85,8 @@ namespace FlightManager.Controllers
                 FlightDuration = flight.ArrivalTime.Subtract(flight.DepartureTime),
                 PlaneCapacity = flight.PlaneCapacity,
                 PlaneType = flight.PlaneType,
+                BusinessTicketsLeft = flight.BusinessTicketsLeft,
+                TicketsLeft = flight.TicketsLeft,
                 Reservations = reservationService.GetAllReservationsForFlight(flight).Select(r => new FlightReservationViewModel()
                 {
                     Email = r.Email,
@@ -86,9 +94,15 @@ namespace FlightManager.Controllers
                     Nationality = r.Nationality,
                     PhoneNumber = r.PhoneNumber,
                     SSN = r.SSN,
-                    TicketType = r.TicketType
-                }).ToList()
+                    TicketType = r.TicketType,
+                    TicketsCount = r.TicketsCount
+                }).ToList(),
+                PageNumber = pageNumber,
+                PageSize = pageSize,
+                PagesCount = (int) Math.Ceiling(reservationService.GetAllReservationsForFlight(flight).Count / (double)pageSize)
             };
+
+            model.Reservations = model.Reservations.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
 
             return View(model);
         }

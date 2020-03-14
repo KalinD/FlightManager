@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace FlightManager.Models
+﻿namespace FlightManager.Models
 {
     public class FlightReservationViewModel
     {
@@ -14,5 +8,6 @@ namespace FlightManager.Models
         public string Nationality { get; set; }
         public string TicketType { get; set; }
         public string Email { get; set; }
+        public int TicketsCount { get; set; }
     }
 }

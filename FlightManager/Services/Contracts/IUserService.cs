@@ -14,6 +14,7 @@ namespace FlightManager.Services.Contracts
         public FlightUser GetUserByUsername(string username);
         public FlightUser GetUserByEmail(string email);
         public FlightUser GetUserById(string id);
+        public int GetUsersCount();
         public List<FlightUser> GetAllUsers();
         public FlightUser UpdateUser(string id, UserEditViewModel user);
     }
