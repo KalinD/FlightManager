@@ -113,10 +113,22 @@ namespace FlightManager.Controllers
             return View();
         }
 
+        [HttpPost]
+        [Authorize]
+        public IActionResult Create(FlightCreateViewModel model)
+        {
+            if (model.ArrivalTime < model.DepartureTime)
+            {
+                return RedirectToAction("Create");
+            }
+            flightService.CreateFlight(model);
+            return RedirectToAction("Index");
+        }
+
         public IActionResult Edit(Guid id)
         {
             Flight flight = flightService.GetFlightById(id);
-            EditFlightViewModel model = new EditFlightViewModel()
+            FlightEditViewModel model = new FlightEditViewModel()
             {
                 ArrivalTime = flight.ArrivalTime,
                 BusinessClassCapacity = flight.BusinessClassCapacity,
@@ -133,38 +145,25 @@ namespace FlightManager.Controllers
         }
 
         [HttpPost]
-        public IActionResult Edit(Guid id, string destinationCity, string departureCity, DateTime departureTime, DateTime arrivalTime,
-            string planeType, string planeID, string captainName, int planeCapacity, int businessClassCapacity)
+        public IActionResult Edit(FlightEditViewModel model)
         {
             Flight flight = new Flight()
             {
-                ArrivalTime = arrivalTime,
-                BusinessClassCapacity = businessClassCapacity,
-                CaptainName = captainName,
-                DepartureCity = departureCity,
-                DepartureTime = departureTime,
-                DestinationCity = destinationCity,
-                PlaneCapacity = planeCapacity,
-                PlaneID = planeID,
-                PlaneType = planeType
+                ArrivalTime = model.ArrivalTime,
+                BusinessClassCapacity = model.BusinessClassCapacity,
+                CaptainName = model.CaptainName,
+                DepartureCity = model.DepartureCity,
+                DepartureTime = model.DepartureTime,
+                DestinationCity = model.DestinationCity,
+                PlaneCapacity = model.PlaneCapacity,
+                PlaneID = model.PlaneID,
+                PlaneType = model.PlaneType
             };
-            flightService.UpdateFlight(id, flight);
+
+            flightService.UpdateFlight(model);
 
             return RedirectToAction("Details");
         }
 
-
-        [HttpPost]
-        [Authorize]
-        public IActionResult Create(string destinationCity, string departureCity, DateTime departureTime, DateTime arrivalTime,
-            string planeType, string planeID, string captainName, int planeCapacity, int businessClassCapacity)
-        {
-            if (arrivalTime < departureTime)
-            {
-                return RedirectToAction("Create");
-            }
-            flightService.CreateFlight(destinationCity, departureCity, departureTime, arrivalTime, planeType, planeID, captainName, planeCapacity, businessClassCapacity);
-            return RedirectToAction("Index");
-        }
     }
 }

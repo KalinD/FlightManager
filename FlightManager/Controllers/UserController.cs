@@ -99,17 +99,9 @@ namespace FlightManager.Controllers
 
         [HttpPost]
         [Authorize(Roles = "Admin")]
-        public IActionResult Edit(string id, string firstName, string lastName, string address, string username, string phoneNumber)
+        public IActionResult Edit(string id, UserEditViewModel model)
         {
-            UserEditViewModel user = new UserEditViewModel(){ 
-                FirstName = firstName,
-                LastName = lastName,
-                Address = address,
-                UserName = username,
-                PhoneNumber = phoneNumber
-            };
-
-            userService.UpdateUser(id, user);
+            userService.UpdateUser(id, model);
 
             return RedirectToAction("Index");
         }

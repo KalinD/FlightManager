@@ -1,4 +1,5 @@
 ﻿using FlightManager.Data;
+using FlightManager.Models;
 using System;
 using System.Collections.Generic;
 
@@ -6,7 +7,7 @@ namespace FlightManager.Services.Contracts
 {
     public interface IReservationService
     {
-        public Reservation CreateReservation(string email, string firstName, string secondName, string lastName, string sSN, string phoneNumber, string nationality, string ticketType, int ticketCount, Flight flight);
+        public Reservation CreateReservation(ReservationCreateViewModel model);
         public Reservation DeleteReservation(Guid id);
         public Reservation GetReservationById(Guid id);
         public List<Reservation> GetAllReservations();

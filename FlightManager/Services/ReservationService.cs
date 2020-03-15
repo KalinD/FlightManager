@@ -1,4 +1,5 @@
 ﻿using FlightManager.Data;
+using FlightManager.Models;
 using FlightManager.Services.Contracts;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using System;
@@ -37,39 +38,39 @@ namespace FlightManager.Services
             return dBContext.Reservations.Where(r => r.FlightID == flight.FlightID).ToList();
         }
 
-        public Reservation CreateReservation(string email, string firstName, string secondName, string lastName, string sSN, string phoneNumber, string nationality, string ticketType, int ticketCount, Flight flight)
+        public Reservation CreateReservation(ReservationCreateViewModel model)
         {
             Reservation reservation = new Reservation()
             {
-                Email = email,
-                FirstName = firstName,
-                SecondName = secondName,
-                LastName = lastName,
-                SSN = sSN,
-                PhoneNumber = phoneNumber,
-                Nationality = nationality,
-                TicketType = ticketType,
-                Flight = flight,
+                Email = model.Email,
+                FirstName = model.FirstName,
+                SecondName = model.SecondName,
+                LastName = model.LastName,
+                SSN = model.SSN,
+                PhoneNumber = model.PhoneNumber,
+                Nationality = model.Nationality,
+                TicketType = model.TicketType,
+                Flight = dBContext.Flights.Where(f => f.FlightID == model.FlightId).First(),
                 IsConfirmed = false,
-                TicketsCount = ticketCount,
-                FlightID = flight.FlightID
+                TicketsCount = model.TicketCount,
+                FlightID = model.FlightId
             };
 
-            Flight dbFlight = dBContext.Flights.Where(f => f.FlightID == flight.FlightID).First();
-            if (ticketType == "Business")
+            Flight dbFlight = dBContext.Flights.Where(f => f.FlightID == model.FlightId).First();
+            if (model.TicketType == "Business")
             {
-                dbFlight.BusinessTicketsLeft -= ticketCount;
+                dbFlight.BusinessTicketsLeft -= model.TicketCount;
             }
             else
             {
-                dbFlight.TicketsLeft -= ticketCount;
+                dbFlight.TicketsLeft -= model.TicketCount;
             }
 
             dBContext.Reservations.Add(reservation);
             dBContext.SaveChanges();
 
-            string msg = $@"Confirmation for flight from {dbFlight.DepartureCity} to {dbFlight.DestinationCity}
-                            <a href={"https://localhost:44361"}/Reservation/Confirm?id={reservation.ReservationID}>Confirm</a>
+            string msg = $@"Confirmation for flight from {dbFlight.DepartureCity} to {dbFlight.DestinationCity} <br />
+                            <a href={"https://localhost:44361"}/Reservation/Confirm?id={reservation.ReservationID}>Confirm</a> <br />
                             <a href={"https://localhost:44361"}/Reservation/Delete?id={reservation.ReservationID}>Delete</a>";
 
             emailSender.SendEmailAsync(reservation.Email, "Reservation Confirmation", msg).GetAwaiter().GetResult();
@@ -103,7 +104,9 @@ namespace FlightManager.Services
 
         public Reservation GetReservationById(Guid id)
         {
-            return dBContext.Reservations.Where(r => r.ReservationID == id).First();
+            Reservation reservation = dBContext.Reservations.Where(r => r.ReservationID == id).First();
+            reservation.Flight = dBContext.Flights.Where(f => f.FlightID == reservation.FlightID).First();
+            return reservation;
         }
     }
 }

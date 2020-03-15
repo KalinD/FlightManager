@@ -1,4 +1,5 @@
 ﻿using FlightManager.Data;
+using FlightManager.Models;
 using FlightManager.Services.Contracts;
 using System;
 using System.Collections.Generic;
@@ -16,20 +17,20 @@ namespace FlightManager.Services
             dBContext = context;
         }
 
-        public Flight CreateFlight(string destinationCity, string departureCity, DateTime departureTime, DateTime arrivalTime, string planeType, string planeID, string captainName, int planeCapacity, int businessClassCapacity)
+        public Flight CreateFlight(FlightCreateViewModel model)
         {
             Flight flight = new Flight() {
-                DestinationCity = destinationCity,
-                DepartureCity = departureCity,
-                DepartureTime = departureTime,
-                ArrivalTime = arrivalTime,
-                PlaneType = planeType,
-                PlaneID = planeID,
-                CaptainName = captainName,
-                PlaneCapacity = planeCapacity,
-                BusinessClassCapacity = businessClassCapacity,
-                BusinessTicketsLeft = businessClassCapacity,
-                TicketsLeft = planeCapacity
+                DestinationCity = model.DestinationCity,
+                DepartureCity = model.DepartureCity,
+                DepartureTime = model.DepartureTime,
+                ArrivalTime = model.ArrivalTime,
+                PlaneType = model.PlaneType,
+                PlaneID = model.PlaneID,
+                CaptainName = model.CaptainName,
+                PlaneCapacity = model.PlaneCapacity,
+                BusinessClassCapacity = model.BusinessClassCapacity,
+                BusinessTicketsLeft = model.BusinessClassCapacity,
+                TicketsLeft = model.PlaneCapacity
             };
 
             dBContext.Flights.Add(flight);
@@ -60,24 +61,24 @@ namespace FlightManager.Services
             return dBContext.Flights.Where(f => f.FlightID == id).First();
         }
 
-        public Flight UpdateFlight(Guid id, Flight flight)
+        public Flight UpdateFlight(FlightEditViewModel model)
         {
-            Flight dbFlight = dBContext.Flights.Where(f => f.FlightID == id).First();
+            Flight dbFlight = dBContext.Flights.Where(f => f.FlightID == model.FlightId).First();
 
-            dbFlight.ArrivalTime = flight.ArrivalTime;
-            dbFlight.BusinessClassCapacity = flight.BusinessClassCapacity;
-            dbFlight.CaptainName = flight.CaptainName;
-            dbFlight.DepartureCity = flight.DepartureCity;
-            dbFlight.DepartureTime = flight.DepartureTime;
-            dbFlight.DestinationCity = flight.DestinationCity;
-            dbFlight.PlaneCapacity = flight.PlaneCapacity;
-            dbFlight.PlaneID = flight.PlaneID;
-            dbFlight.PlaneType = flight.PlaneType;
+            dbFlight.ArrivalTime = model.ArrivalTime;
+            dbFlight.BusinessClassCapacity = model.BusinessClassCapacity;
+            dbFlight.CaptainName = model.CaptainName;
+            dbFlight.DepartureCity = model.DepartureCity;
+            dbFlight.DepartureTime = model.DepartureTime;
+            dbFlight.DestinationCity = model.DestinationCity;
+            dbFlight.PlaneCapacity = model.PlaneCapacity;
+            dbFlight.PlaneID = model.PlaneID;
+            dbFlight.PlaneType = model.PlaneType;
 
             dBContext.Flights.Update(dbFlight);
             dBContext.SaveChanges();
 
-            return flight;
+            return dbFlight;
         }
     }
 }

@@ -109,7 +109,10 @@ namespace FlightManager.Controllers
             return View(model);
         }
 
-        public IActionResult Delete(Guid id) { 
+        public IActionResult Delete(Guid id) {
+            if (reservationService.GetReservationById(id).IsConfirmed) { 
+                return View("CannotDelete");
+            }
             reservationService.DeleteReservation(id);
 
             return View();
