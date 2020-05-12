@@ -86,7 +86,22 @@ namespace FlightManager.Controllers
                 return View("Create", model);
             }
 
-            reservationService.CreateReservation(model.Email, model.FirstName, model.SecondName, model.LastName, model.SSN, model.PhoneNumber, model.Nationality, model.TicketType, model.TicketCount, flight);
+            ReservationCreateViewModel resModel = new ReservationCreateViewModel() {
+                Email = model.Email,
+                FirstName = model.FirstName,
+                SecondName = model.SecondName,
+                LastName = model.LastName,
+                SSN = model.SSN,
+                PhoneNumber = model.PhoneNumber,
+                Nationality = model.Nationality,
+                TicketType = model.TicketType,
+                TicketCount = model.TicketCount,
+                BusinessTicketsLeft = flight.BusinessTicketsLeft,
+                FlightId = flight.FlightID,
+                TicketsLeft = flight.TicketsLeft
+            };
+
+            reservationService.CreateReservation(resModel);
 
             return RedirectToAction("Index", "Home");
         }
